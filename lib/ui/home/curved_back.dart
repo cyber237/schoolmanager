@@ -17,10 +17,12 @@ class CustomCurve extends CustomPainter {
     Path path = new Path();
     Paint paint = new Paint();
     paint.color = MAINHEADTEXTCOLOR.withOpacity(0.9);
-    path.moveTo(0, 0);
-    path.quadraticBezierTo(size.width * 0.5, size.height * 1.2, size.width, 0);
+    path.moveTo(size.width * 0.5, 0);
+    path.quadraticBezierTo(
+        size.width * 0.5, size.width * 0.7, size.width, size.width * 0.7);
 
-    path.lineTo(0, 0);
+    path.lineTo(size.width, 0);
+    path.lineTo(size.width * 0.5, 0);
     path.close();
 
     canvas.drawPath(path, paint);
