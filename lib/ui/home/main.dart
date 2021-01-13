@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'timeTableBoard.dart';
+import '../timeTable/student_timetable/timeTableBoard.dart';
 import 'curved_back.dart';
-import 'calenderBoard.dart';
+import '../calender/calenderBoard.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import '../../logic/database/timetable.dart';
-//import '../../logic/services/network_connection/network_feedback.dart';
+import 'hallOfFame_board.dart';
+import '../../globalSettings.dart';
 import '../../logic/services/network_connection/networkConnectivity.dart';
 
 class Home extends StatefulWidget {
@@ -19,6 +20,7 @@ class _HomeState extends State<Home> {
   SnackBar serverError;
   NetworkConnectivity netConnect = new NetworkConnectivity();
   StreamSubscription netS;
+  bool stretched = true;
   @override
   void initState() {
     serverError = new SnackBar(
@@ -31,11 +33,15 @@ class _HomeState extends State<Home> {
           })),
       duration: Duration(seconds: 4),
     );
+    Future.delayed(Duration.zero, () async {
+      await TimeTableDefault().getTimeTable();
+    });
 
     _checkConnect(context);
     netS = netConnect.connectionStatusController.stream.listen((event) {
       _checkConnect(context);
     });
+
     super.initState();
   }
 
@@ -51,15 +57,37 @@ class _HomeState extends State<Home> {
         height: double.infinity,
         child: new Stack(fit: StackFit.expand, children: [
           CurvedBack(),
-          new ListView(
-            padding: EdgeInsets.only(top: 100),
-            children: [
-              ChangeNotifierProvider(
-                  builder: (context) => TimeTableDB(),
-                  child: TimeTableBoard(
-                    homeNetworkSubscription: netS,
-                  )),
-              CalenderBoard()
+          CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                centerTitle: true,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                floating: true,
+                pinned: true,
+                backgroundColor: MAINAPPBARCOLOR.withOpacity(0.9),
+                expandedHeight: 200,
+                leading: new IconButton(
+                  icon:
+                      new Icon(Icons.menu, size: 30, color: MAINHEADTEXTCOLOR),
+                  onPressed: () => null,
+                ),
+                title: new Text("Home",
+                    style:
+                        new TextStyle(color: MAINHEADTEXTCOLOR, fontSize: 25)),
+                flexibleSpace: FlexibleSpaceBar(),
+              ),
+              new SliverList(
+                delegate: SliverChildListDelegate([
+                  new ChangeNotifierProvider(
+                      builder: (context) => TimeTableDB(),
+                      child: TimeTableBoard(
+                        homeNetworkSubscription: netS,
+                      )),
+                  CalenderBoard(),
+                  HallFameBoard()
+                ]),
+              )
             ],
           ),
         ]));
@@ -68,7 +96,9 @@ class _HomeState extends State<Home> {
   void _checkConnect(BuildContext context) async {
     await netConnect.checkOnlineStatus().then((value) {
       if (!value) {
-        Scaffold.of(context).showSnackBar(serverError);
+        Scaffold.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(serverError);
       }
       return null;
     });

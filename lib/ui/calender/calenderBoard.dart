@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../globalSettings.dart';
-import 'homeGlobalsettings.dart';
-import '../calender/main.dart';
+import '../home/homeGlobalsettings.dart';
+import 'main.dart';
 
 class CalenderBoard extends StatelessWidget {
   const CalenderBoard({Key key}) : super(key: key);
@@ -18,8 +18,8 @@ class CalenderBoard extends StatelessWidget {
     return Container(
         width: _screenWidth * cardwidthRatio,
         child: new InkWell(
-          onTap: () => Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => CalenderPage())),
+          onTap: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => new CalenderPage())),
           child: new Card(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(5))),

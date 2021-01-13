@@ -5,12 +5,11 @@ import 'ui/course/main.dart';
 import 'ui/chat/main.dart';
 import 'ui/activity/main.dart';
 import 'logic/database/init.dart';
+import 'ui/launch/login/main.dart';
 
 void main() async {
   registerAllAdapters();
-  runApp(new MaterialApp(
-    home: MainApp(),
-  ));
+  runApp(new MaterialApp(home: new SafeArea(child: MainApp())));
 }
 
 class MainApp extends StatefulWidget {
@@ -45,23 +44,7 @@ class MainAppState extends State<MainApp> {
     return new Scaffold(
       primary: true,
       extendBodyBehindAppBar: true,
-      //backgroundColor: MAINAPPBARCOLOR,
-      appBar: new AppBar(
-        backgroundColor: MAINAPPBARCOLOR,
-        centerTitle: true,
-        title: new Text(head,
-            style: new TextStyle(fontSize: 20, color: MAINHEADTEXTCOLOR)),
-        leading: new IconButton(
-          icon: new Icon(Icons.list, size: 30, color: MAINHEADTEXTCOLOR),
-          onPressed: () => null,
-        ),
-        actions: [
-          new IconButton(
-            icon: new Icon(Icons.settings, size: 30, color: MAINHEADTEXTCOLOR),
-            onPressed: () => null,
-          )
-        ],
-      ),
+      backgroundColor: MAINAPPBARCOLOR,
       body: page,
       bottomNavigationBar: new BottomNavigationBar(
           type: BottomNavigationBarType.shifting,

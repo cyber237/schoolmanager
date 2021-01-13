@@ -30,6 +30,8 @@ dependencies:
   hive: ^1.4.1+1
   hive_flutter: ^0.3.0+2
   path_provider: ^1.6.5
+  flutter_circular_chart: ^0.1.0
+  syncfusion_flutter_calendar: ^18.4.33
 
 
 
@@ -55,10 +57,10 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  #To add assets to your application, add an assets section, like this:
+  assets:
+    - assets/notification_sound/default.mp3
+    - assets/launch/logo.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

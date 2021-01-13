@@ -1,14 +1,15 @@
 import 'dart:async';
-import '../../logic/database/timetable.dart';
+import '../../../logic/database/timetable.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'homeGlobalsettings.dart';
-import '../../globalSettings.dart';
-import '../timeTable/displayBoard.dart';
-//import '../../data_in_memory/data_ui.dart';
-import '../timeTable/receiverPage.dart';
-import '../../logic/services/network_connection/networkConnectivity.dart';
-import '../../logic/services/network_connection/network_feedback.dart';
+import '../../home/homeGlobalsettings.dart';
+import '../../../globalSettings.dart';
+import 'displayBoard.dart';
+import 'main.dart';
+import '../../../logic/db_models/timetable/timetable.dart';
+import '../../../logic/services/network_connection/networkConnectivity.dart';
+import '../../../logic/services/timetable/network_feedback.dart';
+import 'widgets.dart';
 
 class TimeTableBoard extends StatefulWidget {
   const TimeTableBoard({Key key, this.homeNetworkSubscription})
@@ -26,6 +27,9 @@ class TimeTableBoardState extends State<TimeTableBoard> {
   );
   final DateTime todayDate = DateTime.now();
 
+  final NetworkConnectivityFeedBack networkFeed =
+      new NetworkConnectivityFeedBack();
+
   final SnackBar noTTsnack = new SnackBar(
     content:
         new Text("Sorry! No Timetables Yet\nContact Coordinator for more info"),
@@ -35,20 +39,31 @@ class TimeTableBoardState extends State<TimeTableBoard> {
   SnackBar notConnected;
   NetworkConnectivity netConnect = new NetworkConnectivity();
 
-  List todayData;
+  final List<String> dayList = [
+    "mon",
+    "tue",
+    "wed",
+    "thu",
+    "fri",
+    "sat",
+    "sun"
+  ];
+  List<Period> todayData;
 
   // stores true if there is a time table in memory
-  bool ttLoaded;
-  List timeTables;
-  Timer noTTanimator;
-  TimeTableDefault defaultTT = TimeTableDefault();
+  bool ttLoaded = false;
+  TimeTableDefault ttDefault = new TimeTableDefault();
+  List<TimeTable> timeTables = tts;
+  Timer noTTanimator = new Timer.periodic(Duration(minutes: 1), (timer) {});
 
   @override
   void initState() {
-    defaultTT.getTimeTable().whenComplete(() {
-      if (Navigator.of(context).mounted) {
+    ttDefault.getTimeTable().whenComplete(() {
+      if (mounted) {
         setState(() {
-          timeTables = defaultTT.timeTables;
+          timeTables = ttDefault.timeTables;
+          ttLoaded = timeTables != null && timeTables.isNotEmpty;
+          todayData = getTodayData(tts: timeTables);
         });
       }
     });
@@ -60,13 +75,15 @@ class TimeTableBoardState extends State<TimeTableBoard> {
         duration: Duration(seconds: 3),
         action: new SnackBarAction(
             label: "Retry",
-            onPressed: () => retryTimeTable(context, notConnected)));
+            onPressed: () =>
+                networkFeed.retryTimeTable(context, notConnected)));
 
     Future.delayed(Duration(seconds: 1), () {
       netConnect.connectionStatusController.stream.listen((event) {
-        retryTimeTable(context, notConnected);
+        networkFeed.retryTimeTable(context, notConnected);
       });
     });
+    debugPrint("tt Length= ${timeTables.length}");
 
     // Initialise today's timetable Schedule
     //   * get current week TimeTable
@@ -81,42 +98,46 @@ class TimeTableBoardState extends State<TimeTableBoard> {
     if (noTTanimator.isActive) {
       noTTanimator.cancel();
     }
+
+    ttLoaded = !(timeTables == null || timeTables.length < 1);
+    todayData = ttLoaded ? getTodayData() : null;
+    Future.delayed(Duration(seconds: 1), () {
+      todayData ?? animateTTerror(context);
+    });
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    var ttScheduler = Provider.of<TimeTableDB>(context);
-    timeTables = ttScheduler.timeTables;
-    ttLoaded = !(timeTables == null || timeTables.length < 1);
-    todayData = ttLoaded ? getTodayData() : null;
-    Future.delayed(Duration(seconds: 1), () {
-      todayData ?? animateTTerror();
+    TimeTableDB ttDB = Provider.of<TimeTableDB>(context);
+    setState(() {
+      timeTables = ttDB.timeTables ?? ttDefault.timeTables;
+      ttLoaded = timeTables != null && timeTables.isNotEmpty;
+      todayData = getTodayData(tts: timeTables);
     });
-    todayData ?? animateTTerror();
+
     final double _screenWidth = MediaQuery.of(context).size.width;
     return Container(
       width: _screenWidth > 400 ? _screenWidth * 0.8 : _screenWidth * 0.9,
       child: new InkWell(
         onTap: () {
           // If time table Loaded DO:
+          debugPrint("TTLOADED : $ttLoaded");
           if (ttLoaded) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => ChangeNotifierProvider(
-                      builder: (context) => TimeTableDB(),
-                      child: StudentTimeTable(
-                        hNetworkStream: widget.homeNetworkSubscription,
-                        data: timeTables,
-                      ))),
+              MaterialPageRoute(builder: (context) => new StudentTimeTable()),
             );
           } else {
             netConnect.checkOnlineStatus().then((value) {
               if (value) {
-                Scaffold.of(context).showSnackBar(noTTsnack);
+                Scaffold.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(noTTsnack);
               } else {
-                Scaffold.of(context).showSnackBar(notConnected);
+                Scaffold.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(notConnected);
               }
             });
           }
@@ -133,7 +154,7 @@ class TimeTableBoardState extends State<TimeTableBoard> {
               _date(),
               todayData != null
                   ? _dataBox(context: context, dataList: todayData)
-                  : _noTimeTable()
+                  : _noWeekTimeTable()
             ],
           ),
         ),
@@ -159,34 +180,7 @@ class TimeTableBoardState extends State<TimeTableBoard> {
     );
   }
 
-  Widget _subHead() {
-    return new Container(
-      alignment: Alignment.centerLeft,
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 10),
-      child: new Text(
-        "Current Week",
-        textAlign: TextAlign.left,
-        style: new TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: MAINHEADTEXTCOLOR.withOpacity(0.8),
-            letterSpacing: 1.2,
-            height: 1.5),
-      ),
-    );
-  }
-
   Widget _date() {
-    final List<String> daylist = [
-      "sun",
-      "mon",
-      "tue",
-      "wed",
-      "thu",
-      "fri",
-      "sat",
-    ];
     final TextStyle _dayStyle = new TextStyle(
         fontSize: 25,
         fontWeight: FontWeight.w600,
@@ -215,7 +209,7 @@ class TimeTableBoardState extends State<TimeTableBoard> {
               child: new Row(
             children: [
               new Text(
-                "${daylist[todayDate.weekday].toUpperCase()}",
+                "${dayList[todayDate.weekday - 1].toUpperCase()}",
                 style: _dateStyle,
               ),
               new VerticalDivider(),
@@ -247,7 +241,7 @@ class TimeTableBoardState extends State<TimeTableBoard> {
         scrollDirection: Axis.horizontal,
         children: dataList
             .map((value) => DisplayBoard(
-                  data: value,
+                  period: value,
                   width: _boxWidth * 0.65,
                   maximized: false,
                 ))
@@ -256,9 +250,9 @@ class TimeTableBoardState extends State<TimeTableBoard> {
     );
   }
 
-  Widget _noTimeTable() {
+  Widget _noWeekTimeTable() {
     return new AnimatedContainer(
-        duration: Duration(milliseconds: 200),
+        duration: Duration(seconds: 1),
         alignment: Alignment.center,
         padding: EdgeInsets.all(20),
         margin: EdgeInsets.all(5),
@@ -268,7 +262,7 @@ class TimeTableBoardState extends State<TimeTableBoard> {
         child: new Center(
           child: new ListTile(
             leading: new Icon(Icons.error, color: Colors.red, size: 40),
-            title: new Text("No timetable Found",
+            title: new Text("No week timetable Found",
                 textAlign: TextAlign.start,
                 style: new TextStyle(
                     fontSize: 20,
@@ -284,36 +278,23 @@ class TimeTableBoardState extends State<TimeTableBoard> {
         ));
   }
 
-  void animateTTerror() {
-    noTTanimator = new Timer.periodic(Duration(milliseconds: 200), (timer) {
-      setState(() {
-        noTTswitch = !noTTswitch;
-      });
+  void animateTTerror(BuildContext context) {
+    noTTanimator = new Timer.periodic(Duration(seconds: 1), (timer) {
+      try {
+        if (mounted) {
+          setState(() {
+            noTTswitch = !noTTswitch;
+          });
+        }
+      } catch (e) {
+        debugPrint("Animate TT ERRor ::: $e");
+      }
     });
   }
 
-  List getTodayData() {
-    final List<String> defualtOrder = [
-      "sun",
-      "mon",
-      "tue",
-      "wed",
-      "thu",
-      "fri",
-      "sat",
-    ];
-
-    final List<String> newOrder = [
-      "mon",
-      "tue",
-      "wed",
-      "thu",
-      "fri",
-      "sat",
-      "sun"
-    ];
-
-    return timeTables.last["cells"]
-        [newOrder.indexOf(defualtOrder[todayDate.weekday])];
+  List<Period> getTodayData({List<TimeTable> tts}) {
+    final List ll = Shared().getCurrentWeek(fullData: tts);
+    final TimeTable tt = ll != null ? ll[0] as TimeTable : null;
+    return tt != null ? tt.periods[todayDate.day - 1] : null;
   }
 }

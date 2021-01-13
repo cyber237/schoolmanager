@@ -9,4 +9,5 @@ void registerAllAdapters() async {
 
 void registerTimeTableAdapters() {
   Hive.registerAdapter(TimeTableAdapter());
+  Hive.registerAdapter(PeriodAdapter());
 }
