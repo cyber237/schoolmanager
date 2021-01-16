@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import '../timeTable/student_timetable/timeTableBoard.dart';
+import '../timeTable/student_timetable/board.dart';
 import 'curved_back.dart';
-import '../calender/calenderBoard.dart';
+import '../attendance/board.dart';
+import '../calender/board.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
 import '../../logic/database/timetable.dart';
-import 'hallOfFame_board.dart';
 import '../../globalSettings.dart';
 import '../../logic/services/network_connection/networkConnectivity.dart';
 
@@ -85,7 +85,7 @@ class _HomeState extends State<Home> {
                         homeNetworkSubscription: netS,
                       )),
                   CalenderBoard(),
-                  HallFameBoard()
+                  AttendanceBoard()
                 ]),
               )
             ],

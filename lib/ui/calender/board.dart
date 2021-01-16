@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../globalSettings.dart';
-import '../home/homeGlobalsettings.dart';
 import 'main.dart';
 
 class CalenderBoard extends StatelessWidget {

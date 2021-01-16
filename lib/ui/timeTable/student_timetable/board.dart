@@ -2,7 +2,6 @@ import 'dart:async';
 import '../../../logic/database/timetable.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import '../../home/homeGlobalsettings.dart';
 import '../../../globalSettings.dart';
 import 'displayBoard.dart';
 import 'main.dart';
