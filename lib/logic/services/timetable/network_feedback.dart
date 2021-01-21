@@ -1,8 +1,7 @@
 import '../network_connection/connectivity_status.dart';
 import 'package:flutter/material.dart';
-import '../../database/timetable.dart';
+import '../../states/timetable.dart';
 import 'package:provider/provider.dart';
-//import 'package:flutter/services.dart';
 
 class NetworkConnectivityFeedBack {
   void _networkFeedback(ConnectivityStatus e, BuildContext context,

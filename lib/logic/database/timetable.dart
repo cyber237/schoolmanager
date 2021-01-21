@@ -1,59 +1,12 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
-//import '../../data_in_memory/data_ui.dart';
 import 'package:hive/hive.dart';
 import '../db_models/timetable/timetable.dart';
 
-List<TimeTable> tts = [];
-final String studentUrl =
-    "http://192.168.1.2:45000/getTT/?accountType=student&platform=mobile&level=SWE_L2&_id=stud-8kckhkwr6ru";
-
-class TimeTableDefault {
-  List<TimeTable> timeTables = [];
-  bool feedback = false;
-  Future<void> getTimeTable() async {
-    try {
-      await http
-          .post("http://192.168.1.2:45000/getTT",
-              headers: {"Content-Type": "application/json;charset=utf-8"},
-              body: jsonEncode(<String, String>{
-                'accountType': 'lecturer',
-                'platform': 'mobile',
-                '_id': 'L-kjjywgrv'
-              }))
-          .timeout(Duration(seconds: 2), onTimeout: () async {
-        return null;
-      }).catchError((e) {
-        debugPrint("Time Table GET ERROR ::: $e");
-      }).then((value) async {
-        debugPrint("TT : $value");
-        feedback = value != null;
-        timeTables = value == null ? [] : await packData(value.body);
-        if (timeTables.toList().length >= 1) {
-          storeTimeTable(timeTables);
-        }
-        debugPrint("$timeTables");
-
-        return value;
-      });
-    } on SocketException {
-      debugPrint("Time Table GET Socket exception");
-    }
-
-    await loadTimeTableLocal();
-  }
-
-  Future<void> loadTimeTableLocal() async {
-    var b = await Hive.openBox("timetable");
-    debugPrint("${b.length} timetables in box");
-    timeTables = b.values.map((e) => e as TimeTable).toList();
-    tts = timeTables;
-  }
-
-  void storeTimeTable(List tts) async {
+class TTDB {
+  void storeTimeTable(String payload) async {
+    List<TimeTable> tts = await packData(payload);
     TimeTable tt = tts.last;
     var b = await Hive.openBox("timetable");
     int bLength = b.length - 1;
@@ -70,19 +23,9 @@ class TimeTableDefault {
       }
     } else {
       List<TimeTable> g = [];
-      g.addAll(tts as List<TimeTable>);
+      g.addAll(tts);
       await b.addAll(g);
     }
-  }
-
-  Future<List<TimeTable>> packData(String jsonPayLoad) async {
-    List<TimeTable> ttList = [];
-    List ttJsonList = await json.decode(jsonPayLoad);
-    ttList.addAll(ttJsonList
-        .map((tt) => new TimeTable(
-            periods: getPeriods(tt["periods"]), weekInfo: tt["week"]))
-        .toList());
-    return ttList;
   }
 
   List<List<Period>> getPeriods(List periods) {
@@ -106,12 +49,22 @@ class TimeTableDefault {
     }
     return periodsList;
   }
-}
 
-class TimeTableDB extends TimeTableDefault with ChangeNotifier {
-  Future<void> getTT() async {
-    await getTimeTable();
-    debugPrint("Notifying Listeners ::: Listeners? $hasListeners");
-    notifyListeners();
+  Future<List<TimeTable>> packData(String jsonPayLoad) async {
+    List<TimeTable> ttList = [];
+    List ttJsonList = await json.decode(jsonPayLoad);
+    ttList.addAll(ttJsonList
+        .map((tt) => new TimeTable(
+            periods: getPeriods(tt["periods"]), weekInfo: tt["week"]))
+        .toList());
+    return ttList;
+  }
+
+  Future<List<TimeTable>> loadTimeTableLocal() async {
+    var b = await Hive.openBox("timetable");
+    debugPrint("${b.length} timetables in box");
+    final List<TimeTable> timeTables =
+        b.values.map((e) => e as TimeTable).toList();
+    return timeTables;
   }
 }

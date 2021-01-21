@@ -5,7 +5,6 @@ import 'ui/course/main.dart';
 import 'ui/chat/main.dart';
 import 'ui/activity/main.dart';
 import 'logic/database/init.dart';
-import 'ui/launch/login/main.dart';
 
 void main() async {
   registerAllAdapters();
@@ -47,8 +46,9 @@ class MainAppState extends State<MainApp> {
       backgroundColor: MAINAPPBARCOLOR,
       body: page,
       bottomNavigationBar: new BottomNavigationBar(
+          elevation: 10,
           type: BottomNavigationBarType.shifting,
-          showUnselectedLabels: true,
+          showUnselectedLabels: false,
           selectedItemColor: MAINHEADTEXTCOLOR,
           unselectedItemColor: MAINHEADTEXTCOLOR.withOpacity(0.8),
           selectedLabelStyle: new TextStyle(
@@ -57,9 +57,7 @@ class MainAppState extends State<MainApp> {
               fontWeight: FontWeight.w700),
           unselectedLabelStyle: new TextStyle(
               color: MAINHEADTEXTCOLOR.withOpacity(0.8), fontSize: 11),
-          //selectedFontSize: 15,
-          //fixedColor: MAINHEADTEXTCOLOR,
-          backgroundColor: MAINHEADTEXTCOLOR,
+          backgroundColor: Colors.white,
           currentIndex: current,
           items: bottomNavs.keys
               .map((e) => BottomNavigationBarItem(

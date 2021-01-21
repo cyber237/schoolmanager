@@ -5,7 +5,9 @@ import '../attendance/board.dart';
 import '../calender/board.dart';
 import 'package:provider/provider.dart';
 import 'dart:async';
-import '../../logic/database/timetable.dart';
+import '../../logic/states/timetable.dart';
+import '../../logic/services/timetable/connection.dart';
+
 import '../../globalSettings.dart';
 import '../../logic/services/network_connection/networkConnectivity.dart';
 
@@ -34,7 +36,7 @@ class _HomeState extends State<Home> {
       duration: Duration(seconds: 4),
     );
     Future.delayed(Duration.zero, () async {
-      await TimeTableDefault().getTimeTable();
+      await TimeTableConnection().getTimeTable();
     });
 
     _checkConnect(context);
@@ -55,6 +57,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Container(
         height: double.infinity,
+        color: Colors.grey.shade50,
         child: new Stack(fit: StackFit.expand, children: [
           CurvedBack(),
           CustomScrollView(

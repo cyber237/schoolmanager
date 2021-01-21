@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../globalSettings.dart';
 import 'package:flutter/gestures.dart';
 import '../../../logic/db_models/timetable/timetable.dart';
-import 'widgets.dart';
+import '../../../logic/states/timetable.dart';
 
 class DisplayBoard extends StatelessWidget {
   DisplayBoard(

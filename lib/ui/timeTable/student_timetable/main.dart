@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'widgets.dart';
 import 'package:schoolmanager/globalSettings.dart';
 import 'package:provider/provider.dart';
-import 'studentState.dart';
+import '../../../logic/states/timetable.dart';
 import 'dashboard.dart';
 import '../../../logic/db_models/timetable/timetable.dart';
 

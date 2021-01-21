@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'studentState.dart';
+import '../../../logic/states/timetable.dart';
 import '../../../logic/db_models/timetable/timetable.dart';
 import 'widgets.dart';
 import 'package:flutter_circular_chart/flutter_circular_chart.dart';

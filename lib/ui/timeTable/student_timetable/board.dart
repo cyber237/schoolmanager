@@ -1,5 +1,7 @@
 import 'dart:async';
-import '../../../logic/database/timetable.dart';
+import '../../../logic/states/timetable.dart';
+import '../../../logic/services/timetable/connection.dart';
+
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import '../../../globalSettings.dart';
@@ -8,7 +10,6 @@ import 'main.dart';
 import '../../../logic/db_models/timetable/timetable.dart';
 import '../../../logic/services/network_connection/networkConnectivity.dart';
 import '../../../logic/services/timetable/network_feedback.dart';
-import 'widgets.dart';
 
 class TimeTableBoard extends StatefulWidget {
   const TimeTableBoard({Key key, this.homeNetworkSubscription})
@@ -51,7 +52,7 @@ class TimeTableBoardState extends State<TimeTableBoard> {
 
   // stores true if there is a time table in memory
   bool ttLoaded = false;
-  TimeTableDefault ttDefault = new TimeTableDefault();
+  TimeTableConnection ttDefault = new TimeTableConnection();
   List<TimeTable> timeTables = tts;
   Timer noTTanimator = new Timer.periodic(Duration(minutes: 1), (timer) {});
 
@@ -110,9 +111,9 @@ class TimeTableBoardState extends State<TimeTableBoard> {
   Widget build(BuildContext context) {
     TimeTableDB ttDB = Provider.of<TimeTableDB>(context);
     setState(() {
-      timeTables = ttDB.timeTables ?? ttDefault.timeTables;
-      ttLoaded = timeTables != null && timeTables.isNotEmpty;
-      todayData = getTodayData(tts: timeTables);
+      timeTables = ttDB.timeTables.isEmpty ? tts : ttDB.timeTables;
+      ttLoaded = timeTables.isNotEmpty;
+      todayData = getTodayData(tts: timeTables ?? tts);
     });
 
     final double _screenWidth = MediaQuery.of(context).size.width;
@@ -143,7 +144,7 @@ class TimeTableBoardState extends State<TimeTableBoard> {
         },
         child: new Card(
           shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(5))),
+              borderRadius: BorderRadius.all(Radius.circular(30))),
           elevation: 5,
           child: new Column(
             mainAxisSize: MainAxisSize.max,
@@ -254,7 +255,7 @@ class TimeTableBoardState extends State<TimeTableBoard> {
         duration: Duration(seconds: 1),
         alignment: Alignment.center,
         padding: EdgeInsets.all(20),
-        margin: EdgeInsets.all(5),
+        margin: EdgeInsets.all(20),
         decoration: new BoxDecoration(
             borderRadius: new BorderRadius.circular(10),
             border: Border.all(color: noTTswitch ? Colors.blue : Colors.red)),

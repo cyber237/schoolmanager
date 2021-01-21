@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../globalSettings.dart';
-import 'student.dart';
+import 'student/main.dart';
 
 class Attendance extends StatelessWidget {
   const Attendance({Key key}) : super(key: key);

@@ -39,7 +39,7 @@ class _LoginFormState extends State<LoginForm>
 
   @override
   Widget build(BuildContext context) {
-    final double _screenWidth = MediaQuery.of(context).size.width;
+    //final double _screenWidth = MediaQuery.of(context).size.width;
     return Container(
       child: new ListView(children: [
         logo(context, 0.4),
@@ -51,7 +51,7 @@ class _LoginFormState extends State<LoginForm>
   Container _form(BuildContext context) {
     final double _screenWidth = MediaQuery.of(context).size.width;
     final double _controlWidth = _screenWidth * 0.8;
-    final TextStyle _formLabelStyle = new TextStyle(fontSize: 15);
+    //final TextStyle _formLabelStyle = new TextStyle(fontSize: 15);
     final Widget useridField = new Container(
         width: _controlWidth,
         margin: EdgeInsets.symmetric(vertical: 5),

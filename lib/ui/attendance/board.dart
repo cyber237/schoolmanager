@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../globalSettings.dart';
+import 'lecturer/board.dart';
 import 'main.dart';
 
 class AttendanceBoard extends StatelessWidget {
@@ -10,16 +11,16 @@ class AttendanceBoard extends StatelessWidget {
     final double _screenWidth = MediaQuery.of(context).size.width;
     return new Container(
         width: _screenWidth * cardwidthRatio,
-        height: 300,
+        margin: EdgeInsets.symmetric(vertical: 20),
+        height: 350,
         child: new InkWell(
             onTap: () => Navigator.of(context)
                 .push(MaterialPageRoute(builder: (context) => Attendance())),
             child: new Card(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(5))),
-                elevation: 5,
-                child: new Container(
-                  child: new Center(child: new Text("ATTENDANCE")),
-                ))));
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(30))),
+              elevation: 5,
+              child: new LecturerBoard(),
+            )));
   }
 }

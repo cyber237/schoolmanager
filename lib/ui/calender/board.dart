@@ -8,49 +8,45 @@ class CalenderBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final double _screenWidth = MediaQuery.of(context).size.width;
-    Map<String, String> _quickCalenderData = {
-      "yesterday": "",
-      "today": "Delegue Meetings",
-      "tomorrow": ""
+    Map<String, List> _quickCalenderData = {
+      "yesterday": [],
+      "today": [{}, {}],
+      "tomorrow": []
     };
 
     return Container(
         width: _screenWidth * cardwidthRatio,
+        margin: EdgeInsets.only(top: 20),
         child: new InkWell(
           onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => new CalenderPage())),
           child: new Card(
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(5))),
+                borderRadius: BorderRadius.all(Radius.circular(30))),
             elevation: 5,
             child: new Container(
-              padding: EdgeInsets.symmetric(vertical: 20),
+              padding: EdgeInsets.symmetric(vertical: 40),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _head(),
                   Divider(
-                    endIndent: 80,
-                    indent: 70,
-                    thickness: 1.5,
+                    endIndent: 20,
+                    indent: 20,
                   ),
                   _eventDisplayer(
                       context, "yesterday", _quickCalenderData["yesterday"]),
-                  SizedBox(
-                      height: 1,
-                      width: 100,
-                      child: new Container(
-                        color: Colors.grey.shade100,
-                      )),
+                  Divider(
+                    endIndent: 100,
+                    indent: 100,
+                  ),
                   _eventDisplayer(
                       context, "today", _quickCalenderData["today"]),
-                  SizedBox(
-                      height: 1,
-                      width: 100,
-                      child: new Container(
-                        color: Colors.grey.shade100,
-                      )),
+                  Divider(
+                    endIndent: 100,
+                    indent: 100,
+                  ),
                   _eventDisplayer(
                       context, "tomorrow", _quickCalenderData["tomorrow"]),
                 ],
@@ -90,33 +86,35 @@ class CalenderBoard extends StatelessWidget {
         ));
   }
 
-  Widget _eventDisplayer(BuildContext context, String date, String event) {
+  Widget _eventDisplayer(BuildContext context, String date, List events) {
     final double _screenwidth = MediaQuery.of(context).size.width;
     final TextStyle _dateStyle = new TextStyle(
-        fontSize: 19, fontWeight: FontWeight.w600, color: Colors.grey.shade600);
+        fontSize: 19, fontWeight: FontWeight.w600, color: Colors.grey.shade700);
     final TextStyle _eventStyle = new TextStyle(
         fontSize: 17,
         fontWeight: FontWeight.w500,
         color: Colors.blueGrey.shade700);
     return new Container(
-        width: double.infinity,
+        width: _screenwidth * (_screenwidth > 400 ? 0.65 : 0.7),
         //height: N,
-        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         child: new Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           children: [
             new Container(
-                width: _screenwidth * cardwidthRatio / 2,
+                // width: _screenwidth * cardwidthRatio / 2,
                 child: new Text(
-                  date.toUpperCase(),
-                  style: _dateStyle,
-                )),
+              date.toUpperCase(),
+              style: _dateStyle,
+            )),
             new Container(
-                width: _screenwidth * cardwidthRatio / 2,
+                alignment: Alignment.centerLeft,
+                // width: _screenwidth * cardwidthRatio / 2,
                 child: new Text(
-                  event.isEmpty ? "No event" : event,
+                  events.isEmpty ? "No Events" : "${events.length} Events",
+                  textAlign: TextAlign.start,
                   style: _eventStyle,
                 ))
           ],

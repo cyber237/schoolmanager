@@ -3,72 +3,22 @@ import 'package:provider/provider.dart';
 import 'displayBoard.dart';
 import '../../../globalSettings.dart';
 import '../../../logic/db_models/timetable/timetable.dart';
-import '../../../logic/database/timetable.dart';
-import 'studentState.dart';
+import '../../../logic/services/timetable/connection.dart';
+import '../../../logic/states/timetable.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 
-class Shared {
-  final List<String> weekDays = [
-    "mon",
-    "tue",
-    "wed",
-    "thu",
-    "fri",
-    "sat",
-    "sun"
-  ];
-
-  final List<String> monthList = [
-    "jan",
-    "feb",
-    "mar",
-    "apr",
-    "may",
-    "june",
-    "jul",
-    "aug",
-    "sep",
-    "oct",
-    "nov",
-    "dec"
-  ];
-
-  List<dynamic> getCurrentWeek({List<TimeTable> fullData}) {
-    DateTime now = DateTime.now();
-    if (now.weekday != 1) {
-      now = now.subtract(new Duration(days: now.weekday - 1));
-    }
-
-    DateTime thisWeekStartDate = new DateTime(now.year, now.month, now.day);
-    debugPrint("Shared week Start: ${now.day}");
-    int i = 0;
-    final List<TimeTable> ttL = fullData ?? tts;
-    for (TimeTable tt in ttL) {
-      DateTime firstDate =
-          DateTime.fromMillisecondsSinceEpoch(tt.weekInfo["firstDay"].toInt());
-      if (validateDates(firstDate, thisWeekStartDate)) {
-        return [tt, i];
-      }
-      i += 1;
-    }
-    return null;
-  }
-
-  bool validateDates(DateTime firstDate, DateTime secondDate) {
-    if (firstDate.day == secondDate.day &&
-        firstDate.month == secondDate.month &&
-        firstDate.year == secondDate.year) {
-      return true;
-    }
-    return false;
+class WeekSlides extends StatefulWidget {
+  @override
+  _WeekSlideState createState() {
+    return _WeekSlideState();
   }
 }
 
-class WeekSlides extends StatelessWidget {
+class _WeekSlideState extends State<WeekSlides> {
   @override
   Widget build(BuildContext context) {
     final upStream = Provider.of<TimeTableNotifier>(context);
-    final List<TimeTable> fullData = upStream.fullData;
+    final List<TimeTable> fullData = upStream.fullData ?? tts;
 
     final TextStyle _labelStyle = new TextStyle(
         color: MAINHEADTEXTCOLOR, fontSize: 18, fontWeight: FontWeight.w400);
@@ -85,7 +35,7 @@ class WeekSlides extends StatelessWidget {
           outer: true,
           fade: 0.2,
           duration: 500,
-          index: upStream.ttIndex,
+          //index: upStream.ttIndex,
           onIndexChanged: (ind) {
             upStream.ttIndex = ind;
           },
@@ -227,57 +177,5 @@ class DayPicker extends StatelessWidget {
                   color: _textColor,
                   fontWeight: FontWeight.w600))),
     );
-  }
-}
-
-class BaseWeekObj {
-  BaseWeekObj(this.weekData) {
-    _arrangeData(weekData);
-  }
-  final TimeTable weekData;
-  String weekName;
-  List mon;
-  List tue;
-  List wed;
-  List thu;
-  List fri;
-  List sat;
-  List sun;
-  int firstDate;
-  int lastDate;
-
-  void _arrangeData(TimeTable weekData) {
-    List daysweek = weekData.periods;
-    Map weekDates = weekData.weekInfo;
-    debugPrint("Num of days ${daysweek.length}");
-    firstDate = weekDates["firstDay"];
-    lastDate = weekDates["lastDay"];
-    mon = daysweek.elementAt(0);
-    tue = daysweek.elementAt(1);
-    wed = daysweek.elementAt(2);
-    thu = daysweek.elementAt(3);
-    fri = daysweek.elementAt(4);
-    sat = daysweek.elementAt(5);
-    sun = daysweek.elementAt(6);
-    String firstDateStr =
-        getDate(new DateTime.fromMillisecondsSinceEpoch(firstDate));
-
-    String lastDateStr =
-        getDate(new DateTime.fromMillisecondsSinceEpoch(lastDate));
-
-    weekName = firstDateStr + " / " + lastDateStr;
-  }
-
-  String getDate(DateTime date) {
-    String newForm = (date.day.toString().length < 2
-            ? "0" + date.day.toString()
-            : date.day.toString()) +
-        "-" +
-        (date.month.toString().length < 2
-            ? "0" + date.month.toString()
-            : date.month.toString()) +
-        "-" +
-        date.year.toString();
-    return newForm;
   }
 }

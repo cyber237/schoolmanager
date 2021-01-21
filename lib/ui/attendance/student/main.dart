@@ -9,7 +9,16 @@ class Student extends StatelessWidget {
       child: new ListView(
         padding: EdgeInsets.symmetric(vertical: 20),
         //mainAxisAlignment: MainAxisAlignment.center,
-        children: [new OverallAttendance(), DashBoard(), CoursesDiagnostics()],
+        children: [
+          new OverallAttendance(),
+          DashBoard(),
+          Divider(
+            thickness: 1,
+            endIndent: 20,
+            indent: 20,
+          ),
+          CoursesDiagnostics()
+        ],
       ),
     );
   }
