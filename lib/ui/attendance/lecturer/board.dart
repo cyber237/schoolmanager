@@ -1,27 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:schoolmanager/ui/attendance/lecturer/widgets.dart';
 import '../../../globalSettings.dart';
+import 'main.dart';
 
-class LecturerBoard extends StatelessWidget {
-  const LecturerBoard({Key key}) : super(key: key);
+class AttendanceBoard extends StatelessWidget {
+  const AttendanceBoard({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    //final double _screenWidth = MediaQuery.of(context).size.width;
+    final double _screenWidth = MediaQuery.of(context).size.width;
     return new Container(
-      child: new Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          head(),
-          Divider(
-            indent: 20,
-            endIndent: 20,
-          ),
-          new BottomBoard()
-        ],
-      ),
-    );
+        width: _screenWidth * cardwidthRatio,
+        margin: EdgeInsets.symmetric(vertical: 20),
+        height: 350,
+        child: new Card(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30))),
+            elevation: 5,
+            child: new Container(
+              child: new Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  head(),
+                  Divider(
+                    indent: 20,
+                    endIndent: 20,
+                  ),
+                  new BottomBoard()
+                ],
+              ),
+            )));
   }
 
   Widget head() {

@@ -3,8 +3,6 @@ import '../login/main.dart';
 import '../widgets.dart';
 import '../../../globalSettings.dart';
 import '../../../main.dart';
-import '../../../logic/states/authentication.dart';
-import 'package:provider/provider.dart';
 
 class SignUpForm extends StatefulWidget {
   SignUpForm(
@@ -31,27 +29,25 @@ class _SignUpFormState extends State<SignUpForm> {
   final InputBorder _fieldBorder = new OutlineInputBorder();
   @override
   Widget build(BuildContext context) {
-    return new ChangeNotifierProvider(
-        builder: (context) => new AuthState(),
-        child: new Scaffold(
-          body: new Container(
-              child: new ListView(
-            children: [logo(context, 0.25), _form(context)],
-          )),
-          persistentFooterButtons: [
-            FooterButton(
-              text: "Already have an account?",
-              large: true,
-              side: Side.Left,
-              onTap: () {
-                Navigator.of(context)
-                    .pushReplacement(MaterialPageRoute(builder: (context) {
-                  return new LoginPage();
-                }));
-              },
-            ),
-          ],
-        ));
+    return new Scaffold(
+      body: new Container(
+          child: new ListView(
+        children: [logo(context, 0.25), _form(context)],
+      )),
+      persistentFooterButtons: [
+        FooterButton(
+          text: "Already have an account?",
+          large: true,
+          side: Side.Left,
+          onTap: () {
+            Navigator.of(context)
+                .pushReplacement(MaterialPageRoute(builder: (context) {
+              return new LoginPage();
+            }));
+          },
+        ),
+      ],
+    );
   }
 
   Widget _form(BuildContext context) {

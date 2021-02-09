@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'widgets.dart';
 import 'package:provider/provider.dart';
-import '../../logic/states/calender.dart';
+import '../../logic/shared/states/calender.dart';
 
 class CalenderPage extends StatelessWidget {
   @override

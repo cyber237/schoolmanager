@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import '../../logic/states/calender.dart';
+import '../../logic/shared/states/calender.dart';
 
 class Shared {
   final List<String> months = [

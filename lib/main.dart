@@ -1,24 +1,45 @@
 import 'package:flutter/material.dart';
 import 'globalSettings.dart';
-import 'ui/home/main.dart';
+import 'ui/home/lecturer.dart';
+import 'ui/home/student.dart';
 import 'ui/course/main.dart';
 import 'ui/chat/main.dart';
 import 'ui/activity/main.dart';
-import 'logic/database/init.dart';
+import 'logic/student/database/init.dart';
+import 'logic/lecturer/database/init.dart';
+import 'logic/shared/db_models/user/type.dart';
+
+import 'ui/launch/login/main.dart';
+import 'logic/shared/database/user.dart';
 
 void main() async {
-  registerAllAdapters();
-  runApp(new MaterialApp(home: new SafeArea(child: MainApp())));
+  UserType accountType = await UserDB().checkUser();
+  if (accountType != null) {
+    if (accountType == UserType.Lecturer) {
+      await registerLecturerAdapters();
+    } else {
+      await registerStudentAdapters();
+    }
+  }
+  runApp(new MaterialApp(
+      home: new SafeArea(
+          child: accountType != null
+              ? new MainApp(
+                  accountType: accountType,
+                )
+              : new LoginPage())));
 }
 
 class MainApp extends StatefulWidget {
+  MainApp({@required this.accountType});
+  final UserType accountType;
   @override
   State<StatefulWidget> createState() {
-    return MainAppState();
+    return _MainAppState();
   }
 }
 
-class MainAppState extends State<MainApp> {
+class _MainAppState extends State<MainApp> {
   //int networkChecks = 0;
   final Map bottomNavs = {
     "home": {"active": Icons.home_filled, "unselected": Icons.home_outlined},
@@ -31,10 +52,14 @@ class MainAppState extends State<MainApp> {
   };
   String head = "HOME";
   int current = 0;
-  dynamic page = new Home();
+  dynamic page;
 
   @override
   void initState() {
+    page = widget.accountType == UserType.Lecturer
+        ? new LecturerHome()
+        : new StudentHome();
+
     super.initState();
   }
 
@@ -85,7 +110,9 @@ class MainAppState extends State<MainApp> {
   void _navigate(String pageName) {
     switch (pageName.toLowerCase()) {
       case "home":
-        setState(() => page = Home());
+        setState(() => page = widget.accountType == UserType.Lecturer
+            ? new LecturerHome()
+            : new StudentHome());
         break;
       case "chat":
         setState(() => page = Chat());
