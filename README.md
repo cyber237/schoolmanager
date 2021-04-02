@@ -28,7 +28,7 @@ The SMS app has two main actors, having seperate interfaces
 <img src=images/tt1.jpg width=180 height= 400>  <img src=images/tt2.jpg width=180 height= 400>
 
 #### AVAILABILITY
-<img src=images/av1.jpg width=180 height= 400>  <img src=images/av1.jpg width=180 height=400>
+<img src=images/av1.jpg width=180 height= 400>  <img src=images/av2.jpg width=180 height=400>
 
 ## Adding Student Interface Soon
 
