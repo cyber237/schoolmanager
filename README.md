@@ -22,11 +22,13 @@ The SMS app has two main actors, having seperate interfaces
 ### Lecturer
 
 #### HOME PAGE
-| <img src=images/home1.jpg width=180 height= 400> | <img src=images/home2.jpg width=180 height= 400>
+<img src=images/home1.jpg width=180 height= 400>  <img src=images/home2.jpg width=180 height= 400>
+
 #### SCHEDULE TIMETABLE
-| <img src=images/tt1.jpg width=180 height= 400> | <img src=images/tt2.jpg width=180 height= 400>
+<img src=images/tt1.jpg width=180 height= 400>  <img src=images/tt2.jpg width=180 height= 400>
+
 #### AVAILABILITY
-| <img src=images/av1.jpg width=180 height= 400> | <img src=images/av1.jpg width=180 height=400> |
+<img src=images/av1.jpg width=180 height= 400>  <img src=images/av1.jpg width=180 height=400>
 
 ## Adding Student Interface Soon
 
