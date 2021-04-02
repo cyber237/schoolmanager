@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolmanager/ui/attendance/lecturer/widgets.dart';
 import '../../../globalSettings.dart';
-import 'main.dart';
 
 class AttendanceBoard extends StatelessWidget {
   const AttendanceBoard({Key key}) : super(key: key);
@@ -11,8 +10,8 @@ class AttendanceBoard extends StatelessWidget {
     final double _screenWidth = MediaQuery.of(context).size.width;
     return new Container(
         width: _screenWidth * cardwidthRatio,
-        margin: EdgeInsets.symmetric(vertical: 20),
-        height: 350,
+        margin: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+        height: 300,
         child: new Card(
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(30))),
@@ -22,11 +21,11 @@ class AttendanceBoard extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  head(),
-                  Divider(
-                    indent: 20,
-                    endIndent: 20,
-                  ),
+                  // head(),
+                  // Divider(
+                  //   indent: 20,
+                  //   endIndent: 20,
+                  // ),
                   new BottomBoard()
                 ],
               ),

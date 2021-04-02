@@ -1,13 +1,19 @@
-import 'package:flutter/material.dart';
-import 'widgets/curved_back.dart';
-import '../attendance/lecturer/board.dart';
-import '../calender/board.dart';
 import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:schoolmanager/ui/home/widgets/dashBoard.dart';
+import '../../logic/lecturer/states/timetable/schedule.dart';
 import '../../globalSettings.dart';
 import '../../logic/shared/services/network_connection/networkConnectivity.dart';
+import '../attendance/lecturer/board.dart';
+import '../calender/board.dart';
+import '../timetable/lecturer/board.dart';
+import 'package:schoolmanager/logic/shared/db_models/user/user.dart';
 
 class LecturerHome extends StatefulWidget {
-  LecturerHome({Key key}) : super(key: key);
+  LecturerHome({Key key, @required this.lecturer}) : super(key: key);
+  final User lecturer;
 
   @override
   _LecturerHomeState createState() => _LecturerHomeState();
@@ -18,6 +24,7 @@ class _LecturerHomeState extends State<LecturerHome> {
   NetworkConnectivity netConnect = new NetworkConnectivity();
   StreamSubscription netS;
   bool stretched = true;
+  final ScrollController stretchControll = new ScrollController();
   @override
   void initState() {
     serverError = new SnackBar(
@@ -42,43 +49,68 @@ class _LecturerHomeState extends State<LecturerHome> {
   @override
   void dispose() {
     Future.delayed(Duration.zero, () async => await netS.cancel());
+    stretchControll.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: double.infinity,
-        color: Colors.grey.shade50,
-        child: new Stack(fit: StackFit.expand, children: [
-          CurvedBack(),
-          CustomScrollView(
+      height: double.infinity,
+      color: Colors.grey.shade50,
+      child: new NotificationListener<ScrollUpdateNotification>(
+          onNotification: (not) {
+            if (stretchControll.position.pixels < 400) {
+              if (!stretched) {
+                setState(() => stretched = true);
+              }
+            } else {
+              if (stretched) {
+                setState(() => stretched = false);
+              }
+            }
+            return true;
+          },
+          child: new CustomScrollView(
+            controller: stretchControll,
             slivers: [
               SliverAppBar(
-                centerTitle: true,
+                centerTitle: !stretched,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20)),
-                floating: true,
+                //floating: true,
                 pinned: true,
-                backgroundColor: MAINAPPBARCOLOR.withOpacity(0.9),
-                expandedHeight: 200,
+                backgroundColor: Colors.white.withOpacity(stretched ? 0 : 0.9),
+                expandedHeight: 450,
                 leading: new IconButton(
                   icon:
-                      new Icon(Icons.menu, size: 30, color: MAINHEADTEXTCOLOR),
+                      new Icon(Icons.menu, size: 45, color: MAINHEADTEXTCOLOR),
                   onPressed: () => null,
                 ),
-                title: new Text("Home",
+                title: new Text(stretched ? "" : "Home",
                     style:
                         new TextStyle(color: MAINHEADTEXTCOLOR, fontSize: 25)),
-                flexibleSpace: FlexibleSpaceBar(),
+                flexibleSpace: FlexibleSpaceBar(
+                  background: HomeDashBoard(user: widget.lecturer),
+                  centerTitle: true,
+                ),
+                onStretchTrigger: () async {
+                  debugPrint("Stretched");
+                  return setState(() => stretched = !stretched);
+                },
               ),
               new SliverList(
-                delegate: SliverChildListDelegate(
-                    [CalenderBoard(), AttendanceBoard()]),
+                delegate: SliverChildListDelegate([
+                  new ChangeNotifierProvider(
+                      builder: (context) => new TimeTableDB(),
+                      child: new TimeTableBoard()),
+                  new CalenderBoard(),
+                  new AttendanceBoard(),
+                ]),
               )
             ],
-          ),
-        ]));
+          )),
+    );
   }
 
   void _checkConnect(BuildContext context) async {

@@ -1,4 +1,6 @@
 import 'dart:ui';
+import 'package:flutter/painting.dart';
+
 import '../../../logic/lecturer/db_models/attendance/course.dart';
 import '../../../logic/lecturer/states/attendance.dart';
 import 'package:flutter/material.dart';
@@ -6,82 +8,57 @@ import '../../../globalSettings.dart';
 import 'package:provider/provider.dart';
 import 'main.dart';
 
-class MiniBoard extends StatelessWidget {
-  const MiniBoard(
-      {Key key,
-      @required this.customBoard,
-      @required this.title,
-      @required this.page})
-      : super(key: key);
-  final Widget customBoard;
-  final Widget page;
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        child: new InkWell(
-      onTap: () => Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => page)),
-      child: new Card(
-        child: new Column(
-          children: [head(context, title), customBoard],
-        ),
-      ),
-    ));
-  }
-
-  Widget head(BuildContext context, String head) {
-    final double _screenwidth = MediaQuery.of(context).size.width;
-    return new Container(
-        padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-        width: _screenwidth * 0.5,
-        child: new Text(
-          head.toUpperCase(),
-          textAlign: TextAlign.center,
-          style: new TextStyle(
-              fontSize: 23, color: Colors.black54, fontWeight: FontWeight.w900),
-        ));
-  }
-}
-
 class BottomBoard extends StatelessWidget {
-  const BottomBoard({Key key}) : super(key: key);
+  BottomBoard({Key key}) : super(key: key);
+  final TextStyle _countStyle = new TextStyle(
+      height: 1.1,
+      fontSize: 45,
+      fontWeight: FontWeight.w900,
+      color: Colors.green);
+  final TextStyle _normStyle = new TextStyle(
+      height: 1.2,
+      fontSize: 35,
+      fontWeight: FontWeight.w400,
+      color: Colors.blueGrey.shade400);
 
   @override
   Widget build(BuildContext context) {
     final double _screenwidth = MediaQuery.of(context).size.width;
+
     return new Container(
-      width: _screenwidth * 0.95,
-      height: 200,
-      child: new ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          MiniBoard(
-            title: "Take\nAttendance",
-            customBoard: new Icon(
-              Icons.bar_chart,
-              color: Colors.lightBlueAccent.shade700,
-              size: 100,
-            ),
-            page: new ChangeNotifierProvider(
-                builder: (context) => AttendanceHistoryState(),
-                child: new TakeAttendance()),
+        alignment: Alignment.center,
+        width: _screenwidth * 0.95,
+        height: 250,
+        child: new Column(children: [
+          new Text.rich(
+            TextSpan(text: "33", style: _countStyle, children: [
+              new TextSpan(
+                  text: " Attendances\nconducted in \n", style: _normStyle),
+              new TextSpan(text: "4 ", style: _countStyle),
+              new TextSpan(text: "Courses", style: _normStyle)
+            ]),
+            textAlign: TextAlign.center,
           ),
-          MiniBoard(
-            title: "Past\nRecords",
-            page: new ChangeNotifierProvider(
-                builder: (context) => AttendanceHistoryState(),
-                child: new AttendanceHistory()),
-            customBoard: new Icon(
-              Icons.history,
-              color: Colors.lightBlueAccent.shade700,
-              size: 100,
+          new Container(
+            margin: EdgeInsets.symmetric(vertical: 20),
+            child: new ElevatedButton(
+              child: new Text("Take/History Attendance"),
+              style: new ButtonStyle(
+                  animationDuration: Duration(milliseconds: 200),
+                  backgroundColor:
+                      MaterialStateProperty.all(Colors.green.shade900),
+                  elevation: MaterialStateProperty.all(10),
+                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30))),
+                  minimumSize: MaterialStateProperty.all(new Size(200, 60)),
+                  textStyle: MaterialStateProperty.all(new TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white))),
+              onPressed: () => null,
             ),
-          ),
-        ],
-      ),
-    );
+          )
+        ]));
   }
 }
 
@@ -92,7 +69,7 @@ class CourseBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Container(
-      margin: EdgeInsets.symmetric(vertical: 10),
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: new Card(
         elevation: 20,
         shape: RoundedRectangleBorder(borderRadius: _borderRadius),
@@ -100,21 +77,6 @@ class CourseBoard extends StatelessWidget {
           padding: EdgeInsets.symmetric(vertical: 10),
           decoration: new BoxDecoration(
             borderRadius: _borderRadius,
-            gradient: new LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [
-                  MAINHEADTEXTCOLOR.withOpacity(0.7),
-                  MAINHEADTEXTCOLOR.withOpacity(0.6),
-                  MAINHEADTEXTCOLOR.withOpacity(0.5),
-                  Colors.white70
-                ],
-                stops: [
-                  0.05,
-                  0.15,
-                  0.3,
-                  1
-                ]),
           ),
           child: new Column(
             children: [head(context: context), bottom(context)],
@@ -129,21 +91,21 @@ class CourseBoard extends StatelessWidget {
     return new Container(
         width: _screenWidth * 0.9,
         padding: EdgeInsets.symmetric(vertical: 15),
-        child: new Column(
+        child: new Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               new Text(
-                "course: ${course.name.replaceRange(0, 1, course.name[0].toUpperCase())}",
+                "course:  ${course.name.replaceRange(0, 1, course.name[0].toUpperCase())}",
                 softWrap: false,
                 overflow: TextOverflow.fade,
                 style: new TextStyle(
-                    fontSize: 25,
+                    fontSize: 20,
                     height: 2.0,
                     fontWeight: FontWeight.w500,
                     color: MAINHEADTEXTCOLOR.withOpacity(0.7)),
               ),
               new Text(
-                course.id,
+                "code:  " + course.id,
                 softWrap: false,
                 overflow: TextOverflow.fade,
                 style: new TextStyle(
@@ -160,8 +122,8 @@ class CourseBoard extends StatelessWidget {
       child: new Column(
         children: [
           section(context,
-              left: course.level.speciality.name,
-              right: course.level.speciality.department),
+              left: "speciality:  " + course.level.speciality.id,
+              right: "department:  " + course.level.speciality.department),
           section(context, left: course.level.name, right: course.level.id),
         ],
       ),
@@ -181,7 +143,7 @@ class CourseBoard extends StatelessWidget {
                 "$left",
                 softWrap: false,
                 overflow: TextOverflow.fade,
-                style: new TextStyle(fontSize: 20, color: Colors.white),
+                style: new TextStyle(fontSize: 20, color: Colors.black),
               )),
           new Container(
               width: _boxWidth,
@@ -189,7 +151,7 @@ class CourseBoard extends StatelessWidget {
                 "$right",
                 softWrap: false,
                 overflow: TextOverflow.fade,
-                style: new TextStyle(fontSize: 17, color: Colors.white),
+                style: new TextStyle(fontSize: 17, color: Colors.black),
               )),
         ],
       ),

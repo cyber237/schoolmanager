@@ -1,38 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:schoolmanager/logic/shared/db_models/user/user.dart';
 import 'globalSettings.dart';
 import 'ui/home/lecturer.dart';
 import 'ui/home/student.dart';
 import 'ui/course/main.dart';
 import 'ui/chat/main.dart';
 import 'ui/activity/main.dart';
-import 'logic/student/database/init.dart';
 import 'logic/lecturer/database/init.dart';
 import 'logic/shared/db_models/user/type.dart';
-
-import 'ui/launch/login/main.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'ui/launch/host.dart';
 import 'logic/shared/database/user.dart';
+import 'logic/shared/database/init.dart';
 
 void main() async {
-  UserType accountType = await UserDB().checkUser();
-  if (accountType != null) {
-    if (accountType == UserType.Lecturer) {
-      await registerLecturerAdapters();
-    } else {
-      await registerStudentAdapters();
-    }
-  }
+  await Hive.initFlutter();
+  registerSharedAdapters();
+  User user = await UserDB().getUser();
+  // TODO: uncommect and remove join usertype registration
+  // if (accountType != null) {
+  //   if (accountType == UserType.Lecturer) {
+  //     await registerLecturerAdapters();
+  //   } else {
+  //     await registerStudentAdapters();
+  //   }
+  // }
+  await registerLecturerAdapters();
   runApp(new MaterialApp(
-      home: new SafeArea(
-          child: accountType != null
-              ? new MainApp(
-                  accountType: accountType,
-                )
-              : new LoginPage())));
+    color: Colors.white,
+    theme: new ThemeData(highlightColor: MAINHEADTEXTCOLOR),
+    home: new SafeArea(
+      child: new Host(user: user),
+    ),
+  ));
+
+  // runApp(new MaterialApp(
+  //     home: new SafeArea(
+  //         child: accountType != null
+  //             ? new MainApp(
+  //                 accountType: accountType,
+  //               )
+  //             : new LoginPage())));
 }
 
 class MainApp extends StatefulWidget {
-  MainApp({@required this.accountType});
-  final UserType accountType;
+  MainApp({@required this.user});
+  final User user;
   @override
   State<StatefulWidget> createState() {
     return _MainAppState();
@@ -56,8 +70,10 @@ class _MainAppState extends State<MainApp> {
 
   @override
   void initState() {
-    page = widget.accountType == UserType.Lecturer
-        ? new LecturerHome()
+    page = widget.user.accountType == UserType.Lecturer
+        ? new LecturerHome(
+            lecturer: widget.user,
+          )
         : new StudentHome();
 
     super.initState();
@@ -110,8 +126,8 @@ class _MainAppState extends State<MainApp> {
   void _navigate(String pageName) {
     switch (pageName.toLowerCase()) {
       case "home":
-        setState(() => page = widget.accountType == UserType.Lecturer
-            ? new LecturerHome()
+        setState(() => page = widget.user.accountType == UserType.Lecturer
+            ? new LecturerHome(lecturer: widget.user)
             : new StudentHome());
         break;
       case "chat":

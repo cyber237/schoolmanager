@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../login/main.dart';
 import '../widgets.dart';
 import '../../../globalSettings.dart';
+import '../retrive_account_pause.dart';
 import '../../../main.dart';
+import '../../../logic/shared/db_models/user/type.dart';
 
 class SignUpForm extends StatefulWidget {
   SignUpForm(
@@ -101,7 +103,7 @@ class _SignUpFormState extends State<SignUpForm> {
             textColor: Colors.white,
             onTap: () {
               Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => MainApp()));
+                  MaterialPageRoute(builder: (context) => AccountSetup()));
             },
           ),
         ]));

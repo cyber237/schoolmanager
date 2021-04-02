@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'widgets.dart';
 
 class SpecialitySelect extends StatelessWidget {
   const SpecialitySelect({Key key}) : super(key: key);

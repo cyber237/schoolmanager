@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:schoolmanager/ui/launch/widgets.dart';
-import '../../../globalSettings.dart';
+//import '../../../globalSettings.dart';
+import '../retrive_account_pause.dart';
 import 'package:flutter/widgets.dart';
 import '../../../logic/shared/services/authentication/auth.dart';
 import '../../../logic/shared/services/authentication/status.dart';
@@ -180,7 +181,7 @@ class LoginButton extends StatelessWidget {
         width: _screenWidth * 0.8,
         margin: EdgeInsets.symmetric(vertical: 30),
         height: 70,
-        child: new RaisedButton(
+        child: new ElevatedButton(
           onPressed: upStream.state
               ? () async {
                   Scaffold.of(context)
@@ -193,7 +194,7 @@ class LoginButton extends StatelessWidget {
                       Scaffold.of(context).hideCurrentSnackBar(
                           reason: SnackBarClosedReason.remove);
                       Navigator.of(context).pushReplacement(MaterialPageRoute(
-                          builder: (context) => new MainApp()));
+                          builder: (context) => new AccountSetup()));
                     } else {
                       Scaffold.of(context)
                         ..hideCurrentSnackBar(
@@ -205,9 +206,9 @@ class LoginButton extends StatelessWidget {
                   });
                 }
               : null,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-          elevation: 5,
-          color: MAINHEADTEXTCOLOR,
+          // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          // elevation: 5,
+          // color: MAINHEADTEXTCOLOR,
           child: new Text("Login",
               textAlign: TextAlign.center,
               style: new TextStyle(

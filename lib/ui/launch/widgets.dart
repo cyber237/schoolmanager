@@ -89,15 +89,15 @@ class SubmitButton extends StatelessWidget {
         width: _screenWidth * 0.8,
         margin: EdgeInsets.symmetric(vertical: 30),
         height: 70,
-        child: new RaisedButton(
+        child: new ElevatedButton(
           onPressed: onTap == null
               ? () => null
               : () {
                   onTap();
                 },
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
-          elevation: 5,
-          color: buttColor,
+          // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+          // elevation: 5,
+          // color: buttColor,
           child: new Text(text,
               textAlign: TextAlign.center,
               style: new TextStyle(

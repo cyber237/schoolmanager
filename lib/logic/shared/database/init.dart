@@ -1,13 +1,12 @@
 import 'package:hive/hive.dart';
-import 'dart:async';
+import 'package:schoolmanager/logic/shared/db_models/user/type.dart';
 import '../db_models/user/user.dart';
-import '../db_models/user/type.dart';
 
-Future<void> registerSharedAdapters() async {
-  _userDataAdapters();
+void registerSharedAdapters() {
+  _userAdapters();
 }
 
-void _userDataAdapters() async {
-  Hive.registerAdapter(UserAdapter());
+void _userAdapters() {
   Hive.registerAdapter(UserTypeAdapter());
+  Hive.registerAdapter(UserAdapter());
 }

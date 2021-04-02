@@ -3,29 +3,33 @@ import '../db_models/attendance/course.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-class CourseLecturerDB {
+class AttendanceLecturerDB {
   List<Attendance> getAttendance(List attendance) {
-    return attendance.map((e) {
-      return new Attendance(
-          remark: e["remark"],
-          time: DateTime.fromMillisecondsSinceEpoch(e["time"]),
-          takenBy: e["takenBy"],
-          sheet: getStudents(e["data"]));
-    }).toList();
+    return attendance.isNotEmpty
+        ? attendance.map((e) {
+            return new Attendance(
+                remark: e["remark"],
+                time: DateTime.fromMillisecondsSinceEpoch(e["time"]),
+                takenBy: e["takenBy"],
+                sheet: getStudents(e["data"]));
+          }).toList()
+        : [];
   }
 
   List<Student> getStudents(List students) {
-    return students.map((e) {
-      return new Student(
-          fullName: e["name"],
-          id: e["id"],
-          remark: e["remark"],
-          present: e["status"] == null
-              ? null
-              : e["status"].toString().toLowerCase() == "p"
-                  ? true
-                  : false);
-    }).toList();
+    return students != null
+        ? students.map((e) {
+            return new Student(
+                fullName: e["name"],
+                id: e["id"],
+                remark: e["remark"],
+                present: e["status"] == null
+                    ? null
+                    : e["status"].toString().toLowerCase() == "p"
+                        ? true
+                        : false);
+          }).toList()
+        : [];
   }
 
   Level getLevel(Map level) {
@@ -47,14 +51,16 @@ class CourseLecturerDB {
   Future<void> storeCourses(List courses) async {
     Box courseBox = await Hive.openBox("courses");
     await courseBox.clear();
-    await courseBox.addAll(courses.map((e) {
-      return new Course(
-          name: e["name"],
-          id: e["id"],
-          level: getLevel(e["level"]),
-          hours: e["hours"],
-          attendance: getAttendance(e["attendance"]));
-    }).toList());
+    if (courses != null || courses.isNotEmpty) {
+      await courseBox.addAll(courses.map((e) {
+        return new Course(
+            name: e["name"],
+            id: e["id"],
+            level: getLevel(e["level"]),
+            hours: e["hours"],
+            attendance: getAttendance(e["attendance"]));
+      }).toList());
+    }
     debugPrint("${courseBox.length}");
     await courseBox.close();
   }

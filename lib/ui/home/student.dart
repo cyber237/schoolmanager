@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../timeTable/student/board.dart';
-import 'widgets/curved_back.dart';
 import '../attendance/student/board.dart';
 import '../calender/board.dart';
 import 'package:provider/provider.dart';
@@ -56,44 +55,40 @@ class _StudentHomeState extends State<StudentHome> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: double.infinity,
-        color: Colors.grey.shade50,
-        child: new Stack(fit: StackFit.expand, children: [
-          CurvedBack(),
-          CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                centerTitle: true,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                floating: true,
-                pinned: true,
-                backgroundColor: MAINAPPBARCOLOR.withOpacity(0.9),
-                expandedHeight: 200,
-                leading: new IconButton(
-                  icon:
-                      new Icon(Icons.menu, size: 30, color: MAINHEADTEXTCOLOR),
-                  onPressed: () => null,
-                ),
-                title: new Text("Home",
-                    style:
-                        new TextStyle(color: MAINHEADTEXTCOLOR, fontSize: 25)),
-                flexibleSpace: FlexibleSpaceBar(),
-              ),
-              new SliverList(
-                delegate: SliverChildListDelegate([
-                  new ChangeNotifierProvider(
-                      builder: (context) => TimeTableDB(),
-                      child: TimeTableBoard(
-                        homeNetworkSubscription: netS,
-                      )),
-                  CalenderBoard(),
-                  AttendanceBoard()
-                ]),
-              )
-            ],
+      height: double.infinity,
+      color: Colors.grey.shade50,
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            centerTitle: true,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            floating: true,
+            pinned: true,
+            backgroundColor: MAINAPPBARCOLOR.withOpacity(0.9),
+            expandedHeight: 200,
+            leading: new IconButton(
+              icon: new Icon(Icons.menu, size: 30, color: MAINHEADTEXTCOLOR),
+              onPressed: () => null,
+            ),
+            title: new Text("Home",
+                style: new TextStyle(color: MAINHEADTEXTCOLOR, fontSize: 25)),
+            flexibleSpace: FlexibleSpaceBar(),
           ),
-        ]));
+          new SliverList(
+            delegate: SliverChildListDelegate([
+              new ChangeNotifierProvider(
+                  builder: (context) => TimeTableDB(),
+                  child: TimeTableBoard(
+                    homeNetworkSubscription: netS,
+                  )),
+              CalenderBoard(),
+              AttendanceBoard()
+            ]),
+          )
+        ],
+      ),
+    );
   }
 
   void _checkConnect(BuildContext context) async {

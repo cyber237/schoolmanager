@@ -16,7 +16,7 @@ class CalenderBoard extends StatelessWidget {
 
     return Container(
         width: _screenWidth * cardwidthRatio,
-        margin: EdgeInsets.only(top: 20),
+        margin: EdgeInsets.only(top: 20, left: 10, right: 10),
         child: new InkWell(
           onTap: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => new CalenderPage())),

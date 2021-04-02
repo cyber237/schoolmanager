@@ -3,10 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../../database/timetable.dart';
-import '../../db_models/timetable/timetable.dart';
-import '../../../shared/services/network_connection/settings.dart';
-import '../../../shared/database/user.dart';
+import '../../../database/timetable.dart';
+import '../../../db_models/timetable/timetable.dart';
+import '../../../../shared/services/network_connection/settings.dart';
+import '../../../../shared/database/user.dart';
 
 List<TimeTable> tts = [];
 UserDB user = new UserDB();
@@ -18,7 +18,7 @@ class TimeTableConnection {
   List<TimeTable> timeTables = [];
   bool feedback = false;
   Future<void> getTimeTable() async {
-    Map reqData = await user.getTTRequestData();
+    //Map reqData = await user.getTTRequestData();
     try {
       // await http
       //     .post("$server_url/getTT",
@@ -33,13 +33,9 @@ class TimeTableConnection {
               scheme: "http",
               host: serverobj.host,
               port: serverobj.port,
-              path: "/getTT/",
-              queryParameters: {
-            "speciality": reqData["speciality"],
-            "level": reqData["level"],
-            "group": reqData["group"]
-          }))
-          .timeout(Duration(seconds: 2), onTimeout: () async {
+              path: "/lecturer_tt/",
+              queryParameters: {"id": "l-iuc19ee45"}))
+          .timeout(Duration(milliseconds: 300), onTimeout: () async {
         return null;
       }).catchError((e) {
         debugPrint("Time Table GET ERROR ::: $e");
@@ -47,10 +43,10 @@ class TimeTableConnection {
         debugPrint("TT : $value");
         feedback = value != null;
         List ttDem = value == null ? [] : await json.decode(value.body);
+        debugPrint("TT DEM: $ttDem");
         if (ttDem.toList().length >= 1) {
           db.storeTimeTable(value.body);
         }
-
         return value;
       });
     } on SocketException {
