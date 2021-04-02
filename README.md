@@ -26,7 +26,7 @@ The SMS app has two main actors, having seperate interfaces
 #### SCHEDULE TIMETABLE
 |![ Schedule Page ](images/tt1.jpg | width=90 | height= 200)|![ Schedule Page Scrolled down](images/tt2.jpg | width=90 | height= 200)|
 #### AVAILABILITY
-|![ Availability Page ](images/av1.jpg | width=90 | height= 200)|![ Availability Default Page Scrolled down](images/av2.jpg =90x200)|
+|![ Availability Page ](images/av1.jpg | width=90 | height= 200)|![ Availability Default Page Scrolled down](images/av2.jpg){:height="200px" width="90px"}|
 
 ## Adding Student Interface Soon
 
